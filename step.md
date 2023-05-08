@@ -77,3 +77,26 @@ Why do we need db transaction?
 To run sql transaction
 - Commit to commit all change
 - Rollback when fail to commit and it will delete all change
+
+Some issue with SQL <br>
+Read Phenomena
+- Dirty Read
+    - A transaction reads data written by other concurrent uncommitted transaction
+- Non-Repeatable read
+    - A transaction reads the same row twice and sees different value because it has been modified by other commited transaction
+- Phantom Read
+    - A transaction re-executes a query to find rows that sstisfy a condition and sees a different set of rows, due to changes by other committed transaction
+- Serialization Anomaly
+    - The result of a group of concurrent commited transactions is impossible to achieve if we try to run them sequentially in any order without overlapping
+
+4 Standard Isolation Levels (American National Standards Institute - ANSI)
+1. Read Uncommitted: Can see data written by uncommitted transaction
+2. Read Committed: Only see data written by committed transaction
+3. Repeatable Read: Same read query always returns same result
+4. Serializable: Can achieve same result if execute transactions serially in some order instead of concurrently
+
+> Remember
+> - Retry Mechanism
+>   - There might be errors, timeout or deadlock
+> - Read Documentation
+>   - Each database engine might implement isolation level differently
