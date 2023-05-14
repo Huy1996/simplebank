@@ -17,9 +17,14 @@ run:
 migrateup:
 	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose up
 
+migrateupaws:
+	migrate -path db/migration -database "postgresql://root:YvlHOGILzbVmqeKwbGkQ@simple-bank.crti8cccqylv.us-east-1.rds.amazonaws.com:5432/simple_bank" -verbose up
+
 migrateup1:
 	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose up 1
 
+key_gen:
+	openssl rand -hex 64 | head -c 32
 
 migratedown:
 	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose down
