@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-auth
+  namespace: kube-system
+data:
+  mapUsers: |
+    - userarn: arn:aws:iam::154335758310:user/nguyen.duong
+      username: arn:aws:iam::154335758310:user/nguyen.duong
+      groups:
+        - system:masters
