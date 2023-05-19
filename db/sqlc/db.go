@@ -75,6 +75,12 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.updateAccountStmt, err = db.PrepareContext(ctx, updateAccount); err != nil {
 		return nil, fmt.Errorf("error preparing query UpdateAccount: %w", err)
 	}
+	if q.updateUserStmt, err = db.PrepareContext(ctx, updateUser); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateUser: %w", err)
+	}
+	if q.updateUserV2Stmt, err = db.PrepareContext(ctx, updateUserV2); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateUserV2: %w", err)
+	}
 	return &q, nil
 }
 
@@ -165,6 +171,16 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing updateAccountStmt: %w", cerr)
 		}
 	}
+	if q.updateUserStmt != nil {
+		if cerr := q.updateUserStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateUserStmt: %w", cerr)
+		}
+	}
+	if q.updateUserV2Stmt != nil {
+		if cerr := q.updateUserV2Stmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateUserV2Stmt: %w", cerr)
+		}
+	}
 	return err
 }
 
@@ -221,6 +237,8 @@ type Queries struct {
 	listEntriesStmt         *sql.Stmt
 	listTransfersStmt       *sql.Stmt
 	updateAccountStmt       *sql.Stmt
+	updateUserStmt          *sql.Stmt
+	updateUserV2Stmt        *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
@@ -244,5 +262,7 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		listEntriesStmt:         q.listEntriesStmt,
 		listTransfersStmt:       q.listTransfersStmt,
 		updateAccountStmt:       q.updateAccountStmt,
+		updateUserStmt:          q.updateUserStmt,
+		updateUserV2Stmt:        q.updateUserV2Stmt,
 	}
 }
