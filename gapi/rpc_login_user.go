@@ -7,6 +7,8 @@ import (
 	db "github.com/Huy1996/simplebank/db/sqlc"
 	"github.com/Huy1996/simplebank/pb"
 	"github.com/Huy1996/simplebank/util"
+	"github.com/Huy1996/simplebank/val"
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -14,6 +16,11 @@ import (
 
 
 func (server *Server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (*pb.LoginUserResponse, error) {
+	violations := ValidateLoginUserRequest(req)
+	if violations != nil {
+		return nil, invalidArgumentError(violations)
+	} 
+	
 	user, err := server.store.GetUser(ctx, req.Username)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -46,11 +53,12 @@ func (server *Server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (
 
 	}
 
+	mtdt := server.extractMetadata(ctx)
 	session, err := server.store.CreateSession(ctx, db.CreateSessionParams{
 		ID: 			refreshPayload.ID,
 		Username: 		user.Username,
-		UserAgent: 		"",
-		ClientIp: 		"",
+		UserAgent: 		mtdt.UserAgent,
+		ClientIp: 		mtdt.ClientIP,
 		IsBlocked: 		false,
 		RefreshToken: 	refreshToken,
 		ExpiresAt: 		refreshPayload.ExpiredAt,
@@ -68,4 +76,16 @@ func (server *Server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (
 		RefreshTokenExpiresAt: timestamppb.New(refreshPayload.ExpiredAt),
 	}
 	return rsp, nil
+}
+
+func ValidateLoginUserRequest(req *pb.LoginUserRequest) (violation []*errdetails.BadRequest_FieldViolation) {
+	if err := val.ValidateUsername(req.GetUsername()); err != nil {
+		violation = append(violation, fieldViolation("username", err))
+	}
+
+	if err := val.ValidatePassword(req.GetPassword()); err != nil {
+		violation = append(violation, fieldViolation("password", err))
+	}
+
+	return 
 }
