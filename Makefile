@@ -29,6 +29,9 @@ key_gen:
 migratedown:
 	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose down
 
+migratedownaws:
+	migrate -path db/migration -database "postgresql://root:YvlHOGILzbVmqeKwbGkQ@simple-bank.crti8cccqylv.us-east-1.rds.amazonaws.com:5432/simple_bank" -verbose down 1
+
 migratedown1:
 	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose down 1
 
@@ -69,4 +72,4 @@ evans:
 redis:
 	docker run --name redis -p 6379:6379 -d redis:7-alpine
 
-.PHONY: postgres createdb dropdb migrateup migratedown test server db_docs db_schema proto evans redis
+.PHONY: postgres createdb dropdb migrateup migratedown test server db_docs db_schema proto evans redis migratedownaws
