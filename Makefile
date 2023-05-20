@@ -30,7 +30,7 @@ migratedown:
 	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose down
 
 migratedownaws:
-	migrate -path db/migration -database "postgresql://root:YvlHOGILzbVmqeKwbGkQ@simple-bank.crti8cccqylv.us-east-1.rds.amazonaws.com:5432/simple_bank" -verbose down 1
+	migrate -path db/migration -database "postgresql://root:YvlHOGILzbVmqeKwbGkQ@simple-bank.crti8cccqylv.us-east-1.rds.amazonaws.com:5432/simple_bank" -verbose down
 
 migratedown1:
 	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose down 1
@@ -49,6 +49,7 @@ server:
 
 mock:
 	mockgen -package mockdb -destination db/mock/store.go github.com/Huy1996/simplebank/db/sqlc Store
+	mockgen -package mockwk -destination worker/mock/distributor.go github.com/Huy1996/simplebank/worker TaskDistributor
 
 db_docs:
 	dbdocs build doc/db.dbml
